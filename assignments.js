@@ -306,3 +306,67 @@ dogs.filter(checkEatingOkay);
 const dogsSorted = dogs.slice().sort((a, b) => a.recFood - b.recFood);
 console.log(dogsSorted);
 */
+const solution = (nums) => (nums ? nums.sort((a, b) => a - b) : []);
+console.log(solution([1, 2, 10, 50, 5]));
+console.log(solution([]));
+console.log(solution(null));
+console.log(solution(0));
+
+const sortArray = (arr) => {
+  const filtered = arr.filter((num) => num % 2 !== 0).sort((a, b) => a - b);
+  return arr.map((num) => (num % 2 === 0 ? num : filtered.splice(0, 1))).flat();
+};
+console.log(sortArray([7, 1]));
+console.log(sortArray([5, 8, 6, 3, 4]));
+console.log(sortArray([9, 8, 7, 6, 5, 4, 3, 2, 1, 0]));
+// sortArray([7, 1])
+// sortArray([5, 8, 6, 3, 4])
+// sortArray([9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
+
+const replace = (s) => {
+  const vowels = ['a', 'e', 'i', 'o', 'u'];
+  return s
+    .split('')
+    .map((char) => (vowels.includes(char.toLowerCase()) ? '!' : char))
+    .join('');
+};
+console.log(replace('aeiou'));
+console.log(replace('Hi!'));
+console.log(replace('ABCDE'));
+
+const distinct = (a) => {
+  const result = [];
+  for (const num of a) {
+    if (!result.includes(num)) {
+      result.push(num);
+    } else continue;
+  }
+  return result;
+};
+console.log(distinct([1, 2, 1, 1, 3, 2]));
+
+const distictDiff = (a) => {
+  return a.filter((num, i, arr) => arr.indexOf(num) === i);
+};
+console.log(distictDiff([1, 2, 1, 1, 3, 2]));
+
+const sumMix = (x) =>
+  x.map((el) => Number(el)).reduce((acc, num) => acc + num, 0);
+
+console.log(sumMix(['3', 6, 6, 0, '5', 8, 5, '6', 2, '0']));
+
+const include = (arr, item) => arr.includes(item);
+console.log(include([1, 2, 3, 4], 3));
+
+const findShort = (s) =>
+  s.split(' ').sort((a, b) => a.length - b.length)[0].length;
+console.log(findShort('bitcoin take over the world maybe who knows perhaps'));
+
+const whatday = (num) => {
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+  return days[num - 1] || 'Wrong, please enter a number between 1 and 7'
+};
+console.log(whatday(3))
+console.log(whatday(1))
+console.log(whatday(7))
+console.log(whatday(10))
