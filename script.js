@@ -5,11 +5,68 @@
 // BANKIST APP
 
 // Data
+// const account1 = {
+//   owner: 'Jonas Schmedtmann',
+//   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+//   interestRate: 1.2, // %
+//   pin: 1111,
+// };
+
+// const account2 = {
+//   owner: 'Jessica Davis',
+//   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
+//   interestRate: 1.5,
+//   pin: 2222,
+// };
+
+// const account3 = {
+//   owner: 'Steven Thomas Williams',
+//   movements: [200, -200, 340, -300, -20, 50, 400, -460],
+//   interestRate: 0.7,
+//   pin: 3333,
+// };
+
+// const account4 = {
+//   owner: 'Sarah Smith',
+//   movements: [430, 1000, 700, 50, 90],
+//   interestRate: 1,
+//   pin: 4444,
+// };
+
+// const account5 = {
+//   owner: 'Mitch Riccio',
+//   movements: [850, 550, -300, 1000, -220, 2400, -300, 8000],
+//   interestRate: 1.1,
+//   pin: 5555,
+// };
+
+// const account6 = {
+//   owner: 'Daryl Sullivan',
+//   movements: [2500, -80, 600, -440, 700, 450, 375, -3000, 500],
+//   interestRate: 1.1,
+//   pin: 6666,
+// };
+
+// const accounts = [account1, account2, account3, account4, account5, account6];
+
 const account1 = {
   owner: 'Jonas Schmedtmann',
-  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+  movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
   interestRate: 1.2, // %
   pin: 1111,
+
+  movementsDates: [
+    '2019-11-18T21:31:17.178Z',
+    '2019-12-23T07:42:02.383Z',
+    '2020-01-28T09:15:04.904Z',
+    '2020-04-01T10:17:24.185Z',
+    '2020-05-08T14:11:59.604Z',
+    '2020-05-27T17:01:17.194Z',
+    '2020-07-11T23:36:17.929Z',
+    '2020-07-12T10:51:36.790Z',
+  ],
+  currency: 'EUR',
+  locale: 'pt-PT', // de-DE
 };
 
 const account2 = {
@@ -17,37 +74,22 @@ const account2 = {
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
+
+  movementsDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2020-06-25T18:49:59.371Z',
+    '2020-07-26T12:01:20.894Z',
+  ],
+  currency: 'USD',
+  locale: 'en-US',
 };
 
-const account3 = {
-  owner: 'Steven Thomas Williams',
-  movements: [200, -200, 340, -300, -20, 50, 400, -460],
-  interestRate: 0.7,
-  pin: 3333,
-};
-
-const account4 = {
-  owner: 'Sarah Smith',
-  movements: [430, 1000, 700, 50, 90],
-  interestRate: 1,
-  pin: 4444,
-};
-
-const account5 = {
-  owner: 'Mitch Riccio',
-  movements: [850, 550, -300, 1000, -220, 2400, -300, 8000],
-  interestRate: 1.1,
-  pin: 5555,
-};
-
-const account6 = {
-  owner: 'Daryl Sullivan',
-  movements: [2500, -80, 600, -440, 700, 450, 375, -3000, 500],
-  interestRate: 1.1,
-  pin: 6666,
-};
-
-const accounts = [account1, account2, account3, account4, account5, account6];
+const accounts = [account1, account2];
 
 // Elements
 const labelWelcome = document.querySelector('.welcome');
@@ -76,19 +118,30 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = (movements, sort = false) => {
+const displayMovements = (acc, sort = false) => {
   containerMovements.innerHTML = '';
 
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
 
   movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+
+    const date = new Date(acc.movementsDates[i]);
+    const day = `${date.getDate()}`.padStart(2, '0');
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const year = date.getFullYear();
+    // day/month/year
+    const displayDate = (labelDate.textContent = `${day}/${month}/${year}`);
+
     const html = `
     <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__date">${displayDate}</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
     </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -99,18 +152,18 @@ const calcDisplayBalance = (acc) => {
   acc.balance = acc.movements.reduce((acc, mov) => {
     return acc + mov;
   }, 0);
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
 };
 
 const calcDisplaySummary = (acc) => {
   const incomes = acc.movements
-    .filter((mov) => {
+    .filter((mov, i, arr) => {
       return mov > 0;
     })
     .reduce((acc, mov) => {
       return acc + mov;
     }, 0);
-  labelSumIn.textContent = `${incomes}€`;
+  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
 
   const out = acc.movements
     .filter((mov) => {
@@ -119,7 +172,7 @@ const calcDisplaySummary = (acc) => {
     .reduce((acc, mov) => {
       return acc + mov;
     }, 0);
-  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
 
   const interest = acc.movements
     .filter((mov) => {
@@ -158,11 +211,16 @@ const updateUI = (acc) => {
   // display summary
   calcDisplaySummary(acc);
   // display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 };
 
-//Event Handler
+//Event Handler /////////////////////////
 let currentAccount;
+
+// FAKE ALWAYS LOGGED IN
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = 100;
 
 btnLogin.addEventListener('click', (e) => {
   e.preventDefault(); // prevent form from submitting
@@ -177,6 +235,16 @@ btnLogin.addEventListener('click', (e) => {
       currentAccount.owner.split(' ')[0]
     }`;
     containerApp.style.opacity = 100;
+    //create current date and time
+    const now = new Date();
+    const day = `${now.getDate()}`.padStart(2, '0');
+    const month = `${now.getMonth() + 1}`.padStart(2, '0');
+    const year = now.getFullYear();
+    const hour = `${now.getHours()}`.padStart(2, '0');
+    const minutes = `${now.getMinutes()}`.padStart(2, '0');
+    // day/month/year
+    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minutes}`;
+
     // clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur(); //removes the text cursor
@@ -202,6 +270,10 @@ btnTransfer.addEventListener('click', (e) => {
     // doing the transfer
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
+    //add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
+    //update UI
     updateUI(currentAccount);
   }
 });
@@ -209,7 +281,7 @@ btnTransfer.addEventListener('click', (e) => {
 btnLoan.addEventListener('click', (e) => {
   e.preventDefault();
 
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);
 
   if (
     amount > 0 &&
@@ -217,6 +289,9 @@ btnLoan.addEventListener('click', (e) => {
   ) {
     // Add movement
     currentAccount.movements.push(amount);
+
+    //add loan date
+    currentAccount.movementsDates.push(new Date().toISOString());
     //update UI
     updateUI(currentAccount);
   }
@@ -644,7 +719,6 @@ labelBalance.addEventListener('click', () => {
   );
   console.log(movementsUI2);
 });
-*/
 
 // ARRAY METHODS PRACTICE
 
@@ -654,26 +728,26 @@ const bankDepositSum = accounts
   .flat()
   .filter((mov) => mov > 0)
   .reduce((acc, cur) => acc + cur);
-console.log(bankDepositSum);
+// console.log(bankDepositSum);
 
 // 2. count number of total deposits were at least $1000
 const numDeposits1000 = accounts
   .flatMap((acc) => acc.movements)
   .filter((mov) => mov >= 1000).length;
-console.log(numDeposits1000);
+// console.log(numDeposits1000);
 
 // 2. now do it with reduce
 const numDeposits1000Reduce = accounts
   .flatMap((acc) => acc.movements)
   .filter((mov) => mov >= 1000)
   .reduce((acc, cur, i, arr) => arr.length, 0);
-console.log(numDeposits1000Reduce);
+// console.log(numDeposits1000Reduce);
 
 // 2. now do it with reduce without filter
 const numDeposits1000ReduceAgain = accounts
   .flatMap((acc) => acc.movements)
   .reduce((count, cur) => (cur >= 1000 ? ++count : count), 0);
-console.log(numDeposits1000ReduceAgain);
+// console.log(numDeposits1000ReduceAgain);
 
 // 3. create a new object which contains the sum of the deposits and the withdrawals
 const sums = accounts
@@ -686,7 +760,7 @@ const sums = accounts
     },
     { deposits: 0, withdrawals: 0 }
   );
-console.log(sums);
+// console.log(sums);
 
 // 4. title case function
 // this is a nice title => This Is a Nice Title
@@ -704,6 +778,276 @@ const convertTitleCase = (title) => {
     .join(' ');
   return capitalize(converted);
 };
-console.log(convertTitleCase('this is a nice title'));
-console.log(convertTitleCase('this is a LONG title but not too long'));
-console.log(convertTitleCase('and here is another title with an EXAMPLE'));
+// console.log(convertTitleCase('this is a nice title'));
+// console.log(convertTitleCase('this is a LONG title but not too long'));
+// console.log(convertTitleCase('and here is another title with an EXAMPLE'));
+
+// CONVERTING AND CHECKING NUMBERS
+//all nums are represented as floating point numbers (decimals)
+// Base 10 -> 0 - 9
+// Binary Base -> 0 1
+
+console.log(23 === 23.0); // true
+//js struggles with certain nums
+console.log(0.1 + 0.2); // 0.30000000000000004
+console.log(1 / 10 + 2 / 10); // 0.30000000000000004
+
+//convert strings to nums
+console.log(Number('8')); // convert string to num
+console.log(+'23' + +'23'); // +'num' also converts str to num
+
+//parsing
+//js will try to figure out what the number is in the str
+//if base 10, parseInt 2nd arg is 10
+//if binary base, parseInt 2nd are is 2
+console.log(Number.parseInt('30px', 10)); // 30
+//but the str needs to start with a num, otherwise:
+console.log(Number.parseInt('e23', 10)); // NaN
+
+//parseInt doesnt read decimals
+console.log(Number.parseInt('   2.5rem  ')); // 2 (doesnt care about whitespace)
+//parseFloat reads decimals
+console.log(Number.parseFloat('   2.5rem')); // 2.5
+
+//the older way of doing it was:
+console.log(parseFloat('2.5rem'));
+//which works, but in modern JS, encouraged to call parse on Number object
+
+//to check if something is NOT A NUMBER
+console.log(Number.isNaN(20)); // false, it is a num
+console.log(Number.isNaN('20')); // false, converted === number
+console.log(Number.isNaN(+'20X')); // true, is NaN
+console.log(Number.isNaN(23 / 0)); // false (even though it's infinity?)
+
+//solution for infinity?:
+//check if something IS A NUMBER
+console.log(Number.isFinite(20)); // true -> is is a num
+console.log(Number.isFinite('20')); // false -> it is a str
+console.log(Number.isFinite(+'20X')); // false - X
+console.log(Number.isFinite(23 / 0)); // false, infinity
+
+console.log(Number.isInteger(23)); // true
+console.log(Number.isInteger(23.0)); // true
+console.log(Number.isInteger(23 / 0)); // false
+console.log(Number.isInteger('20')); // false
+console.log(Number.isInteger(Number.parseFloat('20')));
+console.log(Number.isFinite(Number.parseFloat('20rem')));
+
+//go-to if need to check if something is a number? isFinite
+//go-to if need to read a value out of a string (like css '2.5rem')? parseFloat
+
+// MATH AND ROUNDING
+
+//square root
+console.log(Math.sqrt(25)); // 5
+console.log(25 ** (1 / 2)); // 5 -> same equation as above
+//cubic root
+console.log(Math.sqrt(8 ** (1 / 3))); // 1.41...
+
+console.log(Math.max(5, 18, 23, 11, 2)); // 23
+//Math.max does type coercion
+console.log(Math.max(5, 18, '23', 11, 2)); // 23
+//will not work if str has letters, etc
+console.log(Math.max(5, 18, '23p', 11, 2)); // NaN
+
+console.log(Math.min(5, 18, 23, 11, 2)); // 2
+console.log(Math.min(5, 18, '23', 11, 2)); // 2
+
+//calc radius of a circle with 10px:
+console.log(Math.PI * Number.parseFloat('10px') ** 2); // 314.1592...
+
+//random gen
+console.log(Math.trunc(Math.random() * 6) + 1);
+
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min) + 1) + min;
+console.log(randomInt(10, 20));
+
+//rounding integers
+//all of these methods will convert string to num (type coercion)
+console.log(Math.trunc(23.3)); // 23 -> removes decimal
+
+console.log(Math.round(23.3)); // 23 -> rounds to nearest whole num (0.5^)
+console.log(Math.round(23.9)); // 24
+
+console.log(Math.ceil(23.3)); // 24 -> rounds UP to nearest int
+console.log(Math.ceil('23.9')); // 24
+
+console.log(Math.floor(23.3)); // 23 -> rounds DOWN to nearest int
+console.log(Math.floor(23.9)); // 23
+
+// negative numbers ?
+console.log(Math.trunc(-23.3)); // -23 -> removes decimal
+console.log(Math.floor(-23.3)); // -24 -> rounds LOWER
+console.log(Math.ceil(-23.3)); // -23 -> rounds HIGHER
+console.log(Math.round(-23.3)); // -23
+console.log(Math.round(-23.9)); // -24
+
+//rounding decimals
+console.log((2.7).toFixed(0)); // '3' -> always returns a string
+console.log((2.7).toFixed(3)); // '2.700' -> 3 decimal points
+console.log((2.345).toFixed(2)); // '2.35' -> 2 decimal points
+console.log(+(2.345).toFixed(2)); // 2.35 -> converted to num
+
+// REMAINDER OPERATOR
+// returns the remainder of a division
+console.log(5 % 3); // 2
+//good to use to check if num is even or odd
+console.log(6 % 2); // 0 -> even
+console.log(7 % 2); // 1 -> odd
+
+const isEven = (n) => n % 2 === 0;
+console.log(isEven(10)); // true
+console.log(isEven(1111)); // false
+
+labelBalance.addEventListener('click', () => {
+  [...document.querySelectorAll('.movements__row')].forEach((row, i) => {
+    //0, 2, 4, 6...
+    if (i % 2 === 0) {
+      row.style.backgroundColor = 'ghostwhite';
+    }
+    //0, 3, 6, 9
+    if (i % 3 === 0) {
+      row.style.backgroundColor = 'skyblue';
+    }
+  });
+});
+//do something every Nth time? use % 
+
+// NUMERIC SEPARATORS 
+//287,460,000,000
+//can add _ in place of commas for readability, JS ignores them
+const diameter = 287_460_000_000
+console.log(diameter) // 287460000000
+
+const priceCents = 345_99
+console.log(priceCents) // 34599 cents
+
+//both the same, 1500
+const transferFee1 = 15_00
+const transferFee2 = 1_500
+
+//cannot place at the begging, end, or before/after a decimal 
+const PI = 3.14_15
+console.log(PI) // 3.1415
+
+//numeric separaters cannot be used when converting from string
+console.log(Number('230000')) // 230000
+console.log(Number('230_000')) // NaN
+console.log(parseInt('230_000')) // 230
+
+// BIG INT
+//in js, numbers are stored in 64 bits (64 1s and 0s)
+//only 53 of these bits store the digits itself, the rest store the decimal point, etc
+//this means there is a limit to the size a number can be
+
+//this is the biggest number can safely represent
+console.log(2 ** 53 - 1); // 9007199254740991
+console.log(Number.MAX_SAFE_INTEGER); // 9007199254740991
+
+//larger? cannot be represented accurately
+
+//BIGINT was added to deal with this. Can store num with no limit
+console.log(43523643737847847845636365); // 4.3523643737847845e+25 ERROR
+//add n at the end to convert to bigint
+console.log(43523643737847847845636365n); // 43523643737847847845636365n
+//can also use the BigInt function for large numbers, but still wont work
+//if num is too large
+console.log(BigInt(43523643737847847845636365)); // 43523643737847845141610496n
+console.log(BigInt(12345678912345678)); // 17 digits max
+
+//operations
+//are carried out as expected, even with n
+console.log(10000n + 10000n); // 20000n
+console.log(8888888888888888888888888888888n * 10000000n); // 88888888888888888888888888888880000000n
+//but cannot mix BIGINT with REGULAR NUM
+const huge = 35645746537364736473673456345n;
+const num = 8;
+// console.log(Math.sqrt(16n)) // ERROR
+// console.log(huge * num) // TYPEERROR
+console.log(huge * BigInt(num)) // 285165972298917891789387650760n
+
+//exceptions
+console.log(20n > 15) // true, > and < will work
+//below, are 2 different types, and === does not do type coercion
+console.log(20n === 20) // false
+console.log(typeof 20n) // BigInt
+console.log(typeof 20) // number
+console.log(20n == '20')// true -> loose == does type coercion, will work
+
+console.log(huge + ' is REALLY BIG!') // WORKS!
+
+//divisions
+console.log(10n / 3n) //3n // removes the decimals 
+console.log(13n / 3n) //4n
+
+// DATES AND TIMES
+//create a date
+// 4 ways
+const now = new Date();
+console.log(now); // current date and time
+
+console.log(new Date(''));
+console.log(new Date('December 24, 2015')); // can be unreliable
+console.log(new Date(account1.movementsDates[0]));
+
+// (year, month, day, hour, minute, second)
+// months are 0 based, so 10 === november
+console.log(new Date(2037, 10, 19, 15, 23, 5)); // Thu Nov 19 2037 15:23:05 GMT-0500 (Eastern Standard Time)
+//there is no Nov 33rd, this returns Dec 3rd automatically
+console.log(new Date(2037, 10, 33));
+//this will display the amount of milliseconds passed the initial unix time
+console.log(new Date(0)) // Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)
+//1969!
+//convert days to milliseconds
+console.log(new Date(3 * 24 * 60 * 60 * 1000)) // exactly 3 days later than above
+
+// working with dates
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(future);
+//dont use .getYear() ever
+console.log(future.getFullYear()); // 2037
+console.log(future.getMonth()); // 10 -> Nov
+console.log(future.getDate()); // 19 -> 19th
+console.log(future.getDay()); // 4 -> day of the week (thursday)
+console.log(future.getHours()); // 15 -> time, hours
+console.log(future.getMinutes()); // 23 -> time, mins
+console.log(future.getSeconds()); // 0 -> time, secs
+//convert to a date obj to string that you can store somewhere
+console.log(future.toISOString())// 2037-11-19T20:23:00.000Z
+//timestamp for the date
+// this is the milliseconds which have passed since the 1969 unix date
+console.log(future.getTime()) // 2142274980000 
+console.log(new Date(2142274980000))
+//CURRENT TIMESTAMP FOR THIS EXACT MOMENT
+console.log(Date.now()) // 1696281538665
+
+//set versions of all the methods as well
+future.setFullYear(2040)
+console.log(future)
+//etc etc etc
+*/
+
+// OPERATIONS WITH DATES
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(+future); //converted to num
+
+const calcDaysPassed = (date1, date2) => date2 - date1;
+
+const days1 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 14));
+console.log(days1);
+
+const reverse = (str) => {
+  let result = ''
+  for (let i = str.length - 1; i >= 0; i--) {
+    result += str[i]
+  }
+  return result
+}
+console.log(reverse('oblock ocho'))
+
+const reverseAgain = (str) => str.split('').reverse().join('')
+
+const greet = (name) => name ? `Hello ${name}` : 'Hello stranger'
+console.log(greet('Mitch'))
+console.log(greet(''))
