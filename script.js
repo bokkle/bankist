@@ -1036,18 +1036,3 @@ const calcDaysPassed = (date1, date2) => date2 - date1;
 
 const days1 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 14));
 console.log(days1);
-
-const reverse = (str) => {
-  let result = ''
-  for (let i = str.length - 1; i >= 0; i--) {
-    result += str[i]
-  }
-  return result
-}
-console.log(reverse('oblock ocho'))
-
-const reverseAgain = (str) => str.split('').reverse().join('')
-
-const greet = (name) => name ? `Hello ${name}` : 'Hello stranger'
-console.log(greet('Mitch'))
-console.log(greet(''))
