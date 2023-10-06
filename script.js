@@ -1036,3 +1036,22 @@ const calcDaysPassed = (date1, date2) => date2 - date1;
 
 const days1 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 14));
 console.log(days1);
+
+const checkExam = (arr1, arr2) => {
+  const score = arr2.reduce((acc, num, i) => {
+    if (num) {
+      if (num === arr1[i]) {
+        return (acc += 4);
+      } else {
+        return (acc -= 1);
+      }
+    } else {
+      return acc;
+    }
+  }, 0);
+  return score > 0 ? score : 0;
+};
+console.log(checkExam(['a', 'a', 'b', 'b'], ['a', 'c', 'b', 'd']));
+console.log(checkExam(['a', 'a', 'c', 'b'], ['a', 'a', 'b', '']));
+console.log(checkExam(['a', 'a', 'b', 'c'], ['a', 'a', 'b', 'c']));
+console.log(checkExam(['b', 'c', 'b', 'a'], ['', 'a', 'a', 'c']));
