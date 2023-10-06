@@ -1055,3 +1055,29 @@ console.log(checkExam(['a', 'a', 'b', 'b'], ['a', 'c', 'b', 'd']));
 console.log(checkExam(['a', 'a', 'c', 'b'], ['a', 'a', 'b', '']));
 console.log(checkExam(['a', 'a', 'b', 'c'], ['a', 'a', 'b', 'c']));
 console.log(checkExam(['b', 'c', 'b', 'a'], ['', 'a', 'a', 'c']));
+
+const number = (array) => array.map((char, i) => `${i + 1}: ${char}`);
+console.log(number(['a', 'b', 'c']));
+console.log(number([]));
+
+const predictAge = (...ages) => {
+  const sumOfSquares = ages.reduce((acc, num) => acc + num * num, 0);
+  return Math.floor(Math.sqrt(sumOfSquares) / 2);
+};
+console.log(predictAge(65, 60, 75, 55, 60, 63, 64, 45));
+
+const disemvowel = (str) => {
+  const vowels = ['a', 'e', 'i', 'o', 'u'];
+  return str
+    .split('')
+    .map((char) => (vowels.includes(char.toLowerCase()) ? '' : char))
+    .join('');
+};
+console.log(disemvowel('This website is for losers LOL!'));
+
+const checkCoupon = (enteredCode, correctCode, currentDate, expirationDate) =>
+  enteredCode === correctCode &&
+  new Date(currentDate) <= new Date(expirationDate);
+console.log(checkCoupon('123', '123', 'September 5, 2014', 'October 1, 2014'));
+console.log(checkCoupon('123', '123', 'July 9, 2015', 'July 2, 2015'));
+console.log(checkCoupon('123', '123', 'July 9, 2015', 'July 9, 2015'));
