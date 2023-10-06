@@ -1081,3 +1081,40 @@ const checkCoupon = (enteredCode, correctCode, currentDate, expirationDate) =>
 console.log(checkCoupon('123', '123', 'September 5, 2014', 'October 1, 2014'));
 console.log(checkCoupon('123', '123', 'July 9, 2015', 'July 2, 2015'));
 console.log(checkCoupon('123', '123', 'July 9, 2015', 'July 9, 2015'));
+
+const roundToNext5 = (n) => Math.ceil(n / 5) * 5;
+console.log(roundToNext5(3)); // 5
+console.log(roundToNext5(12)); // 15
+console.log(roundToNext5(0)); // 0
+console.log(roundToNext5(-6)); // -5
+
+const wordsToMarks = (str) => {
+  return str
+    .split('')
+    .reduce(
+      (acc, _, i) => (acc += str.charCodeAt(i) - 'a'.charCodeAt(0) + 1),
+      0
+    );
+};
+console.log(wordsToMarks('attitude'));
+console.log(wordsToMarks('friends'));
+
+const isSortedAndHow = (arr) => {
+  const ascending = [...arr].sort((a, b) => a - b);
+  const descending = [...arr].sort((a, b) => b - a);
+  if (ascending.join('') === arr.join('')) {
+    return 'yes, ascending';
+  } else if (descending.join('') === arr.join('')) {
+    return 'yes, descending';
+  } else {
+    return 'no';
+  }
+};
+console.log(isSortedAndHow([1, 2, 3]));
+console.log(isSortedAndHow([3, 2, 1]));
+console.log(isSortedAndHow([3, 1, 2]));
+console.log(isSortedAndHow([4, 2, 30]));
+
+const filterList = (l) => l.filter((char) => char !== `${char}`)
+console.log(filterList([1,2,'a','b']))
+console.log(filterList([1,2,"aasf","1","123",123]))
