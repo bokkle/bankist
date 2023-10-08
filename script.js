@@ -62,8 +62,8 @@ const account1 = {
     '2020-04-01T10:17:24.185Z',
     '2020-05-08T14:11:59.604Z',
     '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2023-10-01T23:36:17.929Z',
+    '2023-10-04T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -83,7 +83,7 @@ const account2 = {
     '2020-02-05T16:33:06.386Z',
     '2020-04-10T14:43:26.374Z',
     '2020-06-25T18:49:59.371Z',
-    '2020-07-26T12:01:20.894Z',
+    '2023-10-04T12:01:20.894Z',
   ],
   currency: 'USD',
   locale: 'en-US',
@@ -118,6 +118,25 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+const formatMovementDate = (date, locale) => {
+  const calcDaysPassed = (date1, date2) =>
+    Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+
+  const daysPassed = calcDaysPassed(new Date(), date);
+  console.log(daysPassed);
+
+  if (daysPassed === 0) return 'Today';
+  if (daysPassed === 1) return 'Yesterday';
+  if (daysPassed <= 7) return `${daysPassed} days ago`;
+
+  // const day = `${date.getDate()}`.padStart(2, '0');
+  // const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  // const year = date.getFullYear();
+  // // day/month/year
+  // return `${day}/${month}/${year}`;
+  return new Intl.DateTimeFormat(locale).format(date);
+};
+
 const displayMovements = (acc, sort = false) => {
   containerMovements.innerHTML = '';
 
@@ -127,13 +146,8 @@ const displayMovements = (acc, sort = false) => {
 
   movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
-
     const date = new Date(acc.movementsDates[i]);
-    const day = `${date.getDate()}`.padStart(2, '0');
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const year = date.getFullYear();
-    // day/month/year
-    const displayDate = (labelDate.textContent = `${day}/${month}/${year}`);
+    const displayDate = formatMovementDate(date, acc.locale);
 
     const html = `
     <div class="movements__row">
@@ -222,6 +236,10 @@ currentAccount = account1;
 updateUI(currentAccount);
 containerApp.style.opacity = 100;
 
+//Experimenting with internationalization API
+
+// labelDate.textContent = new Intl.DateTimeFormat('en-US', options).format(now);
+
 btnLogin.addEventListener('click', (e) => {
   e.preventDefault(); // prevent form from submitting
 
@@ -235,15 +253,32 @@ btnLogin.addEventListener('click', (e) => {
       currentAccount.owner.split(' ')[0]
     }`;
     containerApp.style.opacity = 100;
-    //create current date and time
+
     const now = new Date();
-    const day = `${now.getDate()}`.padStart(2, '0');
-    const month = `${now.getMonth() + 1}`.padStart(2, '0');
-    const year = now.getFullYear();
-    const hour = `${now.getHours()}`.padStart(2, '0');
-    const minutes = `${now.getMinutes()}`.padStart(2, '0');
-    // day/month/year
-    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minutes}`;
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'numeric', // 2 digit, long
+      year: 'numeric', // 2 digit
+      // weekday: 'long', // short, narrow
+    };
+    // const locale = navigator.language;
+    // console.log(locale);
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentAccount.locale,
+      options
+    ).format(now);
+    //LONG WAY, JUST USE THE ABOVE API
+    //create current date and time
+    // const now = new Date();
+    // const day = `${now.getDate()}`.padStart(2, '0');
+    // const month = `${now.getMonth() + 1}`.padStart(2, '0');
+    // const year = now.getFullYear();
+    // const hour = `${now.getHours()}`.padStart(2, '0');
+    // const minutes = `${now.getMinutes()}`.padStart(2, '0');
+    // // day/month/year
+    // labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minutes}`;
 
     // clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
@@ -1026,95 +1061,152 @@ console.log(Date.now()) // 1696281538665
 future.setFullYear(2040)
 console.log(future)
 //etc etc etc
-*/
 
 // OPERATIONS WITH DATES
 const future = new Date(2037, 10, 19, 15, 23);
-console.log(+future); //converted to num
+console.log(Number(future));
+console.log(+future);
 
-const calcDaysPassed = (date1, date2) => date2 - date1;
+const calcDaysPassed = (date1, date2) =>
+  Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
 
-const days1 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 14));
-console.log(days1);
+const days1 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24));
+console.log(days1); // 10 (bc 10 day difference bt dates)
+const days2 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24, 8));
+console.log(days2); // 10, rounds to nearest day
+*/
+const num = 3884764.23;
+// can use NumberFormat to format the number with commas, or however
+//they are formatted in respective countries
+console.log('US: ', new Intl.NumberFormat('en-US').format(num)); //3,884,764.23
 
-const checkExam = (arr1, arr2) => {
-  const score = arr2.reduce((acc, num, i) => {
-    if (num) {
-      if (num === arr1[i]) {
-        return (acc += 4);
-      } else {
-        return (acc -= 1);
-      }
-    } else {
-      return acc;
-    }
-  }, 0);
-  return score > 0 ? score : 0;
+const reverse = (str) => {
+  const reversed = [];
+  for (let i = str.length - 1; i >= 0; i--) {
+    reversed.push(str[i]);
+  }
+  return reversed.join('');
 };
-console.log(checkExam(['a', 'a', 'b', 'b'], ['a', 'c', 'b', 'd']));
-console.log(checkExam(['a', 'a', 'c', 'b'], ['a', 'a', 'b', '']));
-console.log(checkExam(['a', 'a', 'b', 'c'], ['a', 'a', 'b', 'c']));
-console.log(checkExam(['b', 'c', 'b', 'a'], ['', 'a', 'a', 'c']));
+console.log(reverse('Reverse loop (Array)'));
 
-const number = (array) => array.map((char, i) => `${i + 1}: ${char}`);
-console.log(number(['a', 'b', 'c']));
-console.log(number([]));
+const reverseFunc = (str) => str.split('').reverse().join('');
+console.log(reverseFunc('Functional reverse'));
 
-const predictAge = (...ages) => {
-  const sumOfSquares = ages.reduce((acc, num) => acc + num * num, 0);
-  return Math.floor(Math.sqrt(sumOfSquares) / 2);
+const reverseAgn = (str) => {
+  const split = str.split('').reverse();
+  let reversed = '';
+  for (const char of split) {
+    reversed += char;
+  }
+  return reversed;
 };
-console.log(predictAge(65, 60, 75, 55, 60, 63, 64, 45));
+console.log(reverseAgn('GROSS REVERSE'));
 
-const disemvowel = (str) => {
-  const vowels = ['a', 'e', 'i', 'o', 'u'];
+const removeNums = (str) => {
   return str
     .split('')
-    .map((char) => (vowels.includes(char.toLowerCase()) ? '' : char))
+    .filter((char) => isNaN(char) || char === ' ')
     .join('');
 };
-console.log(disemvowel('This website is for losers LOL!'));
+console.log(removeNums('Daryl1 i5s too0 cut3e'));
 
-const checkCoupon = (enteredCode, correctCode, currentDate, expirationDate) =>
-  enteredCode === correctCode &&
-  new Date(currentDate) <= new Date(expirationDate);
-console.log(checkCoupon('123', '123', 'September 5, 2014', 'October 1, 2014'));
-console.log(checkCoupon('123', '123', 'July 9, 2015', 'July 2, 2015'));
-console.log(checkCoupon('123', '123', 'July 9, 2015', 'July 9, 2015'));
+const removeDuplicates = (arr) => {
+  return Array.from(new Set(arr));
+};
+console.log(removeDuplicates([1, 1, 4, 3, 2, 3, 2, 1]));
 
-const roundToNext5 = (n) => Math.ceil(n / 5) * 5;
-console.log(roundToNext5(3)); // 5
-console.log(roundToNext5(12)); // 15
-console.log(roundToNext5(0)); // 0
-console.log(roundToNext5(-6)); // -5
+//TURN A TO 4
+const transmuteA = (str) =>
+  str
+    .split('')
+    .map((char) => (char === 'a' ? '4' : char))
+    .join('');
+console.log(transmuteA('the cat was walking up the hill'));
 
-const wordsToMarks = (str) => {
+//ONLY KEEP NUMBERS AND ORDER THEM LEAST TO GREATEST
+const fixStr = (str) => {
   return str
     .split('')
-    .reduce(
-      (acc, _, i) => (acc += str.charCodeAt(i) - 'a'.charCodeAt(0) + 1),
-      0
-    );
+    .filter((char) => isFinite(char) && char !== ' ')
+    .sort((a, b) => a - b)
+    .map((num) => Number(num));
 };
-console.log(wordsToMarks('attitude'));
-console.log(wordsToMarks('friends'));
+console.log(fixStr('xqc 321 is 1 1a9 game754r 0'));
 
-const isSortedAndHow = (arr) => {
-  const ascending = [...arr].sort((a, b) => a - b);
-  const descending = [...arr].sort((a, b) => b - a);
-  if (ascending.join('') === arr.join('')) {
-    return 'yes, ascending';
-  } else if (descending.join('') === arr.join('')) {
-    return 'yes, descending';
-  } else {
-    return 'no';
+//if x > y === 3 points, if x < y === 0 points, if x = y === 1 points
+const points = (games) => {
+  return games.reduce(
+    (acc, game) =>
+      game[0] > game[2] ? acc + 3 : game[0] === game[2] ? acc + 1 : acc,
+    0
+  );
+};
+
+console.log(
+  points(['1:0', '2:0', '3:0', '4:0', '2:1', '3:1', '4:1', '3:2', '4:2', '4:3'])
+);
+console.log(
+  points(['1:1', '2:2', '3:3', '4:4', '2:2', '3:3', '4:4', '3:3', '4:4', '4:4'])
+);
+console.log(
+  points(['0:1', '0:2', '0:3', '0:4', '1:2', '1:3', '1:4', '2:3', '2:4', '3:4'])
+);
+
+const descendingOrder = (n) =>
+  Number(
+    `${n}`
+      .split('')
+      .sort((a, b) => b - a)
+      .join('')
+  );
+console.log(descendingOrder(421405));
+
+const rowWeights = (arr) => {
+  return [
+    arr.filter((_, i) => i % 2 === 0).reduce((acc, cur) => acc + cur, 0),
+    arr.filter((_, i) => i % 2 !== 0).reduce((acc, cur) => acc + cur, 0),
+  ];
+};
+console.log(rowWeights([50, 60, 70, 80]));
+
+const expandedForm = (num) => {
+  return num
+    .toString()
+    .split('')
+    .map((row, i, arr) =>
+      arr
+        .slice(i)
+        .map((el, i, arr) => (i === 0 ? el : '0'))
+        .filter((el, i, arr) => arr[0] !== '0')
+    )
+    .filter((el) => el.length !== 0)
+    .map((el) => el.join(''))
+    .join(' + ');
+};
+console.log(expandedForm(12));
+console.log(expandedForm(420));
+console.log(expandedForm(70304));
+console.log(expandedForm(420370022));
+
+const firstNonConsecutive = (arr) => {
+  let count = arr[0];
+  for (let i = 0; i < arr.length; i++) {
+    count++;
+    if (count === arr[i] + 1) {
+      continue
+    } else {
+      return count;
+    }
   }
+  return null
 };
-console.log(isSortedAndHow([1, 2, 3]));
-console.log(isSortedAndHow([3, 2, 1]));
-console.log(isSortedAndHow([3, 1, 2]));
-console.log(isSortedAndHow([4, 2, 30]));
+console.log(firstNonConsecutive([1, 2, 3, 4, 6, 7, 8]));
+console.log(firstNonConsecutive([-5, -4, -3, -2, 0, 1, 2]));
+console.log(firstNonConsecutive([1, 2, 3, 4, 5]));
 
-const filterList = (l) => l.filter((char) => char !== `${char}`)
-console.log(filterList([1,2,'a','b']))
-console.log(filterList([1,2,"aasf","1","123",123]))
+const sumDigits = (num) => {
+  return num.toString().split('').reduce((acc, cur) => !isNaN(cur) ? acc + Number(cur) : acc, 0)
+}
+console.log(sumDigits(10))
+console.log(sumDigits(992))
+console.log(sumDigits(-32))
