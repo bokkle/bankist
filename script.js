@@ -1193,20 +1193,111 @@ const firstNonConsecutive = (arr) => {
   for (let i = 0; i < arr.length; i++) {
     count++;
     if (count === arr[i] + 1) {
-      continue
+      continue;
     } else {
       return count;
     }
   }
-  return null
+  return null;
 };
 console.log(firstNonConsecutive([1, 2, 3, 4, 6, 7, 8]));
 console.log(firstNonConsecutive([-5, -4, -3, -2, 0, 1, 2]));
 console.log(firstNonConsecutive([1, 2, 3, 4, 5]));
 
 const sumDigits = (num) => {
-  return num.toString().split('').reduce((acc, cur) => !isNaN(cur) ? acc + Number(cur) : acc, 0)
-}
-console.log(sumDigits(10))
-console.log(sumDigits(992))
-console.log(sumDigits(-32))
+  return num
+    .toString()
+    .split('')
+    .reduce((acc, cur) => (!isNaN(cur) ? acc + Number(cur) : acc), 0);
+};
+console.log(sumDigits(10));
+console.log(sumDigits(992));
+console.log(sumDigits(-32));
+
+const usdcny = (usd) => usd * 6.75;
+console.log(usdcny(15));
+
+const evenNumbers = (arr, num) => {
+  const result = [];
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (arr[i] % 2 === 0) {
+      result.push(arr[i]);
+    }
+  }
+  return result.slice(0, num);
+};
+console.log(evenNumbers([1, 2, 3, 4, 5, 6, 7, 8, 9], 3));
+console.log(evenNumbers([-22, 5, 3, 11, 26, -6, -7, -8, -9, -8, 26], 2));
+console.log(evenNumbers([6, -25, 3, 7, 5, 5, 7, -3, 23], 1));
+
+const numsEven = (arr, num) =>
+  arr
+    .filter((num) => num % 2 === 0)
+    .reverse()
+    .slice(0, num);
+console.log(numsEven([1, 2, 3, 4, 5, 6, 7, 8, 9], 3));
+console.log(numsEven([-22, 5, 3, 11, 26, -6, -7, -8, -9, -8, 26], 2));
+console.log(numsEven([6, -25, 3, 7, 5, 5, 7, -3, 23], 1));
+
+const alphabetWar = (fight) => {
+  let leftScore = 0;
+  let rightScore = 0;
+  const leftLetters = 'sbpw';
+  const rightLetters = 'zdqm';
+  for (let i = 0; i < fight.length; i++) {
+    if (leftLetters.match(fight[i])) {
+      leftScore += leftLetters.indexOf(fight[i]) + 1;
+    }
+    if (rightLetters.match(fight[i])) {
+      rightScore += rightLetters.indexOf(fight[i]) + 1;
+    }
+  }
+  return leftScore > rightScore
+    ? 'Left side wins!'
+    : rightScore > leftScore
+    ? 'Right side wins!'
+    : `Let's fight again!`;
+};
+console.log(alphabetWar('wwwwww'));
+console.log(alphabetWar('zdqmwpbs'));
+//left
+// w - 4
+// p - 3
+// b - 2
+// s - 1
+//right
+// m - 4
+// q -3
+// d - 2
+// z - 1
+
+const order = (words) => {
+  return words
+    .split(' ')
+    .map((word) => word.match(word.split('').filter((char) => isFinite(char))))
+    .sort()
+    .map((num) => num.input);
+};
+console.log(order('is2 Thi1s T4est 3a'));
+console.log(order('4of Fo1r pe6ople g3ood th5e the2'));
+
+const lowercaseCount = (str) =>
+  str.split('').reduce((acc, cur) => (/[a-z]/.test(cur) ? acc + 1 : acc), 0);
+console.log(lowercaseCount('abcABC123'));
+console.log(lowercaseCount("ABC123!@€£#$%^&*()_-+=}{[]|':;?/>.<,~"));
+
+const array = (str) => {
+  return str
+    .replaceAll(',', ' ')
+    .split(' ')
+    .map((char, i, arr) => {
+      if (arr.length > 2) {
+        return char
+      }
+    })
+    .filter((el, i, arr) => i !== 0 && i !== arr.length - 1)
+    // .join(' ');
+};
+console.log(array('1,2,3'));
+console.log(array('A1,B2,C3,D4,E5'));
+console.log(array('A1,B2'));
