@@ -1287,17 +1287,30 @@ console.log(lowercaseCount('abcABC123'));
 console.log(lowercaseCount("ABC123!@€£#$%^&*()_-+=}{[]|':;?/>.<,~"));
 
 const array = (str) => {
-  return str
-    .replaceAll(',', ' ')
-    .split(' ')
-    .map((char, i, arr) => {
-      if (arr.length > 2) {
-        return char
-      }
-    })
-    .filter((el, i, arr) => i !== 0 && i !== arr.length - 1)
-    // .join(' ');
+  const arr = str.split(',');
+  return arr.length >= 3 ? arr.slice(1, arr.length - 1).join(' ') : null;
 };
 console.log(array('1,2,3'));
 console.log(array('A1,B2,C3,D4,E5'));
 console.log(array('A1,B2'));
+console.log(array(''));
+console.log(array('1'));
+
+const wave = (str) => {
+  return str.split('').map((elem, i, arr) => arr);
+};
+console.log(wave('hello'));
+
+//split the string
+//map a new variant of the string for each instance of it's length
+//loop over each of each string, and capitalize each consecutive index
+
+const defineSuit = (card) =>
+  card.includes('♣')
+    ? 'clubs'
+    : card.includes('♦')
+    ? 'diamonds'
+    : card.includes('♥')
+    ? 'hearts'
+    : 'spades';
+console.log(defineSuit('3♣'));
