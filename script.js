@@ -137,6 +137,13 @@ const formatMovementDate = (date, locale) => {
   return new Intl.DateTimeFormat(locale).format(date);
 };
 
+const formatCur = (value, locale, currency) => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 const displayMovements = (acc, sort = false) => {
   containerMovements.innerHTML = '';
 
@@ -149,13 +156,15 @@ const displayMovements = (acc, sort = false) => {
     const date = new Date(acc.movementsDates[i]);
     const displayDate = formatMovementDate(date, acc.locale);
 
+    const formattedMovement = formatCur(mov, acc.locale, acc.currency);
+
     const html = `
     <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
         <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__value">${formattedMovement}</div>
     </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -166,7 +175,7 @@ const calcDisplayBalance = (acc) => {
   acc.balance = acc.movements.reduce((acc, mov) => {
     return acc + mov;
   }, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+  labelBalance.textContent = formatCur(acc.balance, acc.locale, acc.currency);
 };
 
 const calcDisplaySummary = (acc) => {
@@ -177,7 +186,7 @@ const calcDisplaySummary = (acc) => {
     .reduce((acc, mov) => {
       return acc + mov;
     }, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  labelSumIn.textContent = formatCur(incomes, acc.locale, acc.currency);
 
   const out = acc.movements
     .filter((mov) => {
@@ -186,7 +195,7 @@ const calcDisplaySummary = (acc) => {
     .reduce((acc, mov) => {
       return acc + mov;
     }, 0);
-  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
+  labelSumOut.textContent = formatCur(Math.abs(out), acc.locale, acc.currency);
 
   const interest = acc.movements
     .filter((mov) => {
@@ -201,7 +210,7 @@ const calcDisplaySummary = (acc) => {
     .reduce((acc, int) => {
       return acc + int;
     }, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = formatCur(interest, acc.locale, acc.currency);
 };
 
 const createUsernames = (accs) => {
@@ -1074,243 +1083,76 @@ const days1 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24));
 console.log(days1); // 10 (bc 10 day difference bt dates)
 const days2 = calcDaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24, 8));
 console.log(days2); // 10, rounds to nearest day
-*/
 const num = 3884764.23;
 // can use NumberFormat to format the number with commas, or however
 //they are formatted in respective countries
-console.log('US: ', new Intl.NumberFormat('en-US').format(num)); //3,884,764.23
 
-const reverse = (str) => {
-  const reversed = [];
-  for (let i = str.length - 1; i >= 0; i--) {
-    reversed.push(str[i]);
-  }
-  return reversed.join('');
+//when using an object to set style/unites in Intl formatting, look up...
+//the keys/values required (celsius, miles-per-hour)
+const options = {
+  style: 'unit',
+  // style: 'percent',
+  style: 'currency',
+  // unit: 'celsius',
+  // unit: 'mile-per-hour',
+  currency: 'EUR',
+  useGrouping: false, // prints the number without , separators
 };
-console.log(reverse('Reverse loop (Array)'));
+//below: outputs 'US: 3,884,764.23'
+//commas automatically added in bc of the International api
+console.log('US:     ', new Intl.NumberFormat('en-US').format(num));
+// 'Germany: 3.884.764,23
+console.log('Germany: ', new Intl.NumberFormat('de-DE').format(num));
+// Syria:  ٣٬٨٨٤٬٧٦٤٫٢٣
+console.log('Syria: ', new Intl.NumberFormat('ar-SY').format(num));
+// automatically returns the formatting that corresponds with their browser
+console.log('Browser: ', new Intl.NumberFormat(navigator.language).format(num));
 
-const reverseFunc = (str) => str.split('').reverse().join('');
-console.log(reverseFunc('Functional reverse'));
+//doing the above, except using the options object
+//object is passed in as the second arg in NumberFormat()
 
-const reverseAgn = (str) => {
-  const split = str.split('').reverse();
-  let reversed = '';
-  for (const char of split) {
-    reversed += char;
-  }
-  return reversed;
-};
-console.log(reverseAgn('GROSS REVERSE'));
-
-const removeNums = (str) => {
-  return str
-    .split('')
-    .filter((char) => isNaN(char) || char === ' ')
-    .join('');
-};
-console.log(removeNums('Daryl1 i5s too0 cut3e'));
-
-const removeDuplicates = (arr) => {
-  return Array.from(new Set(arr));
-};
-console.log(removeDuplicates([1, 1, 4, 3, 2, 3, 2, 1]));
-
-//TURN A TO 4
-const transmuteA = (str) =>
-  str
-    .split('')
-    .map((char) => (char === 'a' ? '4' : char))
-    .join('');
-console.log(transmuteA('the cat was walking up the hill'));
-
-//ONLY KEEP NUMBERS AND ORDER THEM LEAST TO GREATEST
-const fixStr = (str) => {
-  return str
-    .split('')
-    .filter((char) => isFinite(char) && char !== ' ')
-    .sort((a, b) => a - b)
-    .map((num) => Number(num));
-};
-console.log(fixStr('xqc 321 is 1 1a9 game754r 0'));
-
-//if x > y === 3 points, if x < y === 0 points, if x = y === 1 points
-const points = (games) => {
-  return games.reduce(
-    (acc, game) =>
-      game[0] > game[2] ? acc + 3 : game[0] === game[2] ? acc + 1 : acc,
-    0
-  );
-};
-
+// US: 3,884,764.23 mph
+console.log('US: ', new Intl.NumberFormat('en-US', options).format(num));
+// Germany:  3.884.764,23 mi/h
+console.log('Germany: ', new Intl.NumberFormat('de-DE', options).format(num));
+// Syria:  ٣٬٨٨٤٬٧٦٤٫٢٣ ميل/س
+console.log('Syria: ', new Intl.NumberFormat('ar-SY', options).format(num));
+// Browser:  3,884,764.23 mph
 console.log(
-  points(['1:0', '2:0', '3:0', '4:0', '2:1', '3:1', '4:1', '3:2', '4:2', '4:3'])
+  'Browser: ',
+  new Intl.NumberFormat(navigator.language, options).format(num)
 );
-console.log(
-  points(['1:1', '2:2', '3:3', '4:4', '2:2', '3:3', '4:4', '3:3', '4:4', '4:4'])
-);
-console.log(
-  points(['0:1', '0:2', '0:3', '0:4', '1:2', '1:3', '1:4', '2:3', '2:4', '3:4'])
+*/
+
+// SETTIMEOUT AND SETINTERVAL
+// setInterval runs until we stop it
+
+// setTimeout runs just once, after a set amt of time
+// once JS hits this line of code, it continues to the next lines of code
+// it counts in the background and the setTimeout will complete
+//this is called asynchronous JS
+setTimeout(() => console.log('Here is your pizza'), 3000);
+//waiting... will be logged before 'here is your pizzas'
+console.log('Waiting...');
+setTimeout(() => console.log("I'd like a pepperoni pizza"), 2000);
+
+//we cannot just pass arguments into the () => in setTimeout
+//instead, we pass the arguments after the defined timeout time
+setTimeout(
+  (ing1, ing2) => console.log(`Order 2: ${ing1} & ${ing2} pizza`),
+  4000,
+  'olives',
+  'spinach'
 );
 
-const descendingOrder = (n) =>
-  Number(
-    `${n}`
-      .split('')
-      .sort((a, b) => b - a)
-      .join('')
-  );
-console.log(descendingOrder(421405));
+//we can cancel the timer until the delay has passed
+const ingredients = ['cheese', 'spinach'];
+const pizzaTimer = setTimeout(
+  (ing1, ing2) => console.log(`Order 3: ${ing1} + ${ing2} pizza`),
+  5000,
+  ...ingredients
+);
 
-const rowWeights = (arr) => {
-  return [
-    arr.filter((_, i) => i % 2 === 0).reduce((acc, cur) => acc + cur, 0),
-    arr.filter((_, i) => i % 2 !== 0).reduce((acc, cur) => acc + cur, 0),
-  ];
-};
-console.log(rowWeights([50, 60, 70, 80]));
-
-const expandedForm = (num) => {
-  return num
-    .toString()
-    .split('')
-    .map((row, i, arr) =>
-      arr
-        .slice(i)
-        .map((el, i, arr) => (i === 0 ? el : '0'))
-        .filter((el, i, arr) => arr[0] !== '0')
-    )
-    .filter((el) => el.length !== 0)
-    .map((el) => el.join(''))
-    .join(' + ');
-};
-console.log(expandedForm(12));
-console.log(expandedForm(420));
-console.log(expandedForm(70304));
-console.log(expandedForm(420370022));
-
-const firstNonConsecutive = (arr) => {
-  let count = arr[0];
-  for (let i = 0; i < arr.length; i++) {
-    count++;
-    if (count === arr[i] + 1) {
-      continue;
-    } else {
-      return count;
-    }
-  }
-  return null;
-};
-console.log(firstNonConsecutive([1, 2, 3, 4, 6, 7, 8]));
-console.log(firstNonConsecutive([-5, -4, -3, -2, 0, 1, 2]));
-console.log(firstNonConsecutive([1, 2, 3, 4, 5]));
-
-const sumDigits = (num) => {
-  return num
-    .toString()
-    .split('')
-    .reduce((acc, cur) => (!isNaN(cur) ? acc + Number(cur) : acc), 0);
-};
-console.log(sumDigits(10));
-console.log(sumDigits(992));
-console.log(sumDigits(-32));
-
-const usdcny = (usd) => usd * 6.75;
-console.log(usdcny(15));
-
-const evenNumbers = (arr, num) => {
-  const result = [];
-  for (let i = arr.length - 1; i >= 0; i--) {
-    if (arr[i] % 2 === 0) {
-      result.push(arr[i]);
-    }
-  }
-  return result.slice(0, num);
-};
-console.log(evenNumbers([1, 2, 3, 4, 5, 6, 7, 8, 9], 3));
-console.log(evenNumbers([-22, 5, 3, 11, 26, -6, -7, -8, -9, -8, 26], 2));
-console.log(evenNumbers([6, -25, 3, 7, 5, 5, 7, -3, 23], 1));
-
-const numsEven = (arr, num) =>
-  arr
-    .filter((num) => num % 2 === 0)
-    .reverse()
-    .slice(0, num);
-console.log(numsEven([1, 2, 3, 4, 5, 6, 7, 8, 9], 3));
-console.log(numsEven([-22, 5, 3, 11, 26, -6, -7, -8, -9, -8, 26], 2));
-console.log(numsEven([6, -25, 3, 7, 5, 5, 7, -3, 23], 1));
-
-const alphabetWar = (fight) => {
-  let leftScore = 0;
-  let rightScore = 0;
-  const leftLetters = 'sbpw';
-  const rightLetters = 'zdqm';
-  for (let i = 0; i < fight.length; i++) {
-    if (leftLetters.match(fight[i])) {
-      leftScore += leftLetters.indexOf(fight[i]) + 1;
-    }
-    if (rightLetters.match(fight[i])) {
-      rightScore += rightLetters.indexOf(fight[i]) + 1;
-    }
-  }
-  return leftScore > rightScore
-    ? 'Left side wins!'
-    : rightScore > leftScore
-    ? 'Right side wins!'
-    : `Let's fight again!`;
-};
-console.log(alphabetWar('wwwwww'));
-console.log(alphabetWar('zdqmwpbs'));
-//left
-// w - 4
-// p - 3
-// b - 2
-// s - 1
-//right
-// m - 4
-// q -3
-// d - 2
-// z - 1
-
-const order = (words) => {
-  return words
-    .split(' ')
-    .map((word) => word.match(word.split('').filter((char) => isFinite(char))))
-    .sort()
-    .map((num) => num.input);
-};
-console.log(order('is2 Thi1s T4est 3a'));
-console.log(order('4of Fo1r pe6ople g3ood th5e the2'));
-
-const lowercaseCount = (str) =>
-  str.split('').reduce((acc, cur) => (/[a-z]/.test(cur) ? acc + 1 : acc), 0);
-console.log(lowercaseCount('abcABC123'));
-console.log(lowercaseCount("ABC123!@€£#$%^&*()_-+=}{[]|':;?/>.<,~"));
-
-const array = (str) => {
-  const arr = str.split(',');
-  return arr.length >= 3 ? arr.slice(1, arr.length - 1).join(' ') : null;
-};
-console.log(array('1,2,3'));
-console.log(array('A1,B2,C3,D4,E5'));
-console.log(array('A1,B2'));
-console.log(array(''));
-console.log(array('1'));
-
-const wave = (str) => {
-  return str.split('').map((elem, i, arr) => arr);
-};
-console.log(wave('hello'));
-
-//split the string
-//map a new variant of the string for each instance of it's length
-//loop over each of each string, and capitalize each consecutive index
-
-const defineSuit = (card) =>
-  card.includes('♣')
-    ? 'clubs'
-    : card.includes('♦')
-    ? 'diamonds'
-    : card.includes('♥')
-    ? 'hearts'
-    : 'spades';
-console.log(defineSuit('3♣'));
+if (ingredients.includes('spinach')) {
+  clearTimeout();
+}
