@@ -1156,3 +1156,22 @@ const pizzaTimer = setTimeout(
 if (ingredients.includes('spinach')) {
   clearTimeout();
 }
+
+const smallEnough = (a, limit) => a.every((num) => num <= limit);
+
+console.log(smallEnough([66, 101], 200));
+console.log(smallEnough([78, 117, 110, 99, 104, 117, 107, 115], 100));
+console.log(
+  smallEnough([9, 8, 8, 0, 2, 3, 7, 1, 6, 9, 2, 8, 2, 7, 2, 6, 2], 5)
+);
+
+const arithmetic = (a, b, operator) => {
+  return operator === 'add'
+    ? a + b
+    : operator === 'subtract'
+    ? a - b
+    : operator === 'multiply'
+    ? a * b
+    : a / b;
+};
+console.log(arithmetic(1, 2, "add"))
