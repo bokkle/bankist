@@ -1175,4 +1175,4 @@ const arithmetic = (a, b, operator) => {
     : a / b;
 };
 console.log(arithmetic(1, 2, "add"))
-//kek
+//kek kek
