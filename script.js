@@ -1175,4 +1175,16 @@ const arithmetic = (a, b, operator) => {
     : a / b;
 };
 console.log(arithmetic(1, 2, "add"))
-//kek kek
+
+const dutyFree = (normPrice, discount, hol) => Math.trunc(hol / (normPrice * (discount / 100)))
+console.log(dutyFree(12, 50, 1000))
+console.log(dutyFree(17, 17, 500))
+console.log(dutyFree(24, 35, 3000))
+
+const minValue = (values) => Number(Array.from(new Set(values.sort((a, b) => a - b))).join(''))
+console.log(minValue([1, 3, 1])) // 13
+console.log(minValue([4, 7, 5, 7])) // 457
+console.log(minValue([4, 8, 1, 4])) // 148
+console.log(minValue([5, 7, 9, 5, 7])) // 579
+console.log(minValue([6, 7, 8, 7, 6, 6])) // 678
+// kek
