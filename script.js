@@ -1189,3 +1189,6 @@ console.log(minValue([5, 7, 9, 5, 7])) // 579
 console.log(minValue([6, 7, 8, 7, 6, 6])) // 678
 // kek kek
 // kek
+
+const reverse = (arr) => arr.split('').reverse().join('')
+//.
