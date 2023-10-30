@@ -1192,3 +1192,13 @@ console.log(minValue([6, 7, 8, 7, 6, 6])) // 678
 
 const reverse = (arr) => arr.split('').reverse().join('')
 //.
+
+const remove = (str) => str.split('').filter((char) => char !== '!').join('') + '!'
+console.log(remove('!!!Hi!'))
+console.log(remove('Hi'))
+console.log(remove('!Hi! Hi!!'))
+
+const dataReverse = (data) => {
+  const sections = data.length / 8
+}
+console.log(dataReverse([1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,1,0,1,0]))
