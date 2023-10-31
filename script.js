@@ -1199,6 +1199,9 @@ console.log(remove('Hi'))
 console.log(remove('!Hi! Hi!!'))
 
 const dataReverse = (data) => {
-  const sections = data.length / 8
+  const subArray = data.length 
+  return data.map((num, i, arr) => {
+
+  })
 }
 console.log(dataReverse([1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,1,0,1,0]))
