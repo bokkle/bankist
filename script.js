@@ -1198,10 +1198,8 @@ console.log(remove('!!!Hi!'))
 console.log(remove('Hi'))
 console.log(remove('!Hi! Hi!!'))
 
-const dataReverse = (data) => {
-  const subArray = data.length 
-  return data.map((num, i, arr) => {
+const bump = (x) => x.split('').reduce((acc, char) => char === 'n' ? acc + 1 : acc, 0) <= 15 ? 'Wohoo!' : 'Car Dead'
 
-  })
-}
-console.log(dataReverse([1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,1,0,1,0]))
+console.log(bump("__nn_nnnn__n_n___n____nn__nnn"))
+console.log(bump("__nn_nnnn__n_n___n____nn__nnnn"))
+console.log(bump("__nn_nnnn__n_n___n____nn__nnnnn"))
