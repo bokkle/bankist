@@ -1203,3 +1203,4 @@ const bump = (x) => x.split('').reduce((acc, char) => char === 'n' ? acc + 1 : a
 console.log(bump("__nn_nnnn__n_n___n____nn__nnn"))
 console.log(bump("__nn_nnnn__n_n___n____nn__nnnn"))
 console.log(bump("__nn_nnnn__n_n___n____nn__nnnnn"))
+// :)
