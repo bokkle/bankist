@@ -237,13 +237,37 @@ const updateUI = (acc) => {
   displayMovements(acc);
 };
 
+const startLogoutTimer = () => {
+  const tick = () => {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    //In each call, print remaining time to UI
+    labelTimer.textContent = `${min}:${sec}`;
+    //When 0 seconds, stop timer and log out user
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+    //decrease 1s
+    time--;
+  };
+  //Set time to 5 minutes
+  let time = 300;
+  //Call timer every second
+  tick();
+  const timer = setInterval(tick, 1000);
+
+  return timer;
+};
+
 //Event Handler /////////////////////////
-let currentAccount;
+let currentAccount, timer;
 
 // FAKE ALWAYS LOGGED IN
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+// currentAccount = account1;
+// updateUI(currentAccount);
+containerApp.style.opacity = 0;
 
 //Experimenting with internationalization API
 
@@ -292,6 +316,9 @@ btnLogin.addEventListener('click', (e) => {
     // clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur(); //removes the text cursor
+
+    if (timer) clearInterval(timer);
+    timer = startLogoutTimer();
     // update UI
     updateUI(currentAccount);
   }
@@ -319,6 +346,10 @@ btnTransfer.addEventListener('click', (e) => {
     receiverAcc.movementsDates.push(new Date().toISOString());
     //update UI
     updateUI(currentAccount);
+
+    //Reset timer
+    clearInterval(timer);
+    timer = startLogoutTimer();
   }
 });
 
@@ -331,13 +362,18 @@ btnLoan.addEventListener('click', (e) => {
     amount > 0 &&
     currentAccount.movements.some((mov) => mov >= amount * 0.1)
   ) {
-    // Add movement
-    currentAccount.movements.push(amount);
+    setTimeout(() => {
+      // Add movement
+      currentAccount.movements.push(amount);
 
-    //add loan date
-    currentAccount.movementsDates.push(new Date().toISOString());
-    //update UI
-    updateUI(currentAccount);
+      //add loan date
+      currentAccount.movementsDates.push(new Date().toISOString());
+      //update UI
+      updateUI(currentAccount);
+      //Reset timer
+      clearInterval(timer);
+      timer = startLogoutTimer();
+    }, 2500);
   }
   inputLoanAmount.value = '';
 });
@@ -1122,7 +1158,6 @@ console.log(
   'Browser: ',
   new Intl.NumberFormat(navigator.language, options).format(num)
 );
-*/
 
 // SETTIMEOUT AND SETINTERVAL
 // setInterval runs until we stop it
@@ -1157,50 +1192,9 @@ if (ingredients.includes('spinach')) {
   clearTimeout();
 }
 
-const smallEnough = (a, limit) => a.every((num) => num <= limit);
-
-console.log(smallEnough([66, 101], 200));
-console.log(smallEnough([78, 117, 110, 99, 104, 117, 107, 115], 100));
-console.log(
-  smallEnough([9, 8, 8, 0, 2, 3, 7, 1, 6, 9, 2, 8, 2, 7, 2, 6, 2], 5)
-);
-
-const arithmetic = (a, b, operator) => {
-  return operator === 'add'
-    ? a + b
-    : operator === 'subtract'
-    ? a - b
-    : operator === 'multiply'
-    ? a * b
-    : a / b;
-};
-console.log(arithmetic(1, 2, "add"))
-
-const dutyFree = (normPrice, discount, hol) => Math.trunc(hol / (normPrice * (discount / 100)))
-console.log(dutyFree(12, 50, 1000))
-console.log(dutyFree(17, 17, 500))
-console.log(dutyFree(24, 35, 3000))
-
-const minValue = (values) => Number(Array.from(new Set(values.sort((a, b) => a - b))).join(''))
-console.log(minValue([1, 3, 1])) // 13
-console.log(minValue([4, 7, 5, 7])) // 457
-console.log(minValue([4, 8, 1, 4])) // 148
-console.log(minValue([5, 7, 9, 5, 7])) // 579
-console.log(minValue([6, 7, 8, 7, 6, 6])) // 678
-// kek kek
-// kek
-
-const reverse = (arr) => arr.split('').reverse().join('')
-//.
-
-const remove = (str) => str.split('').filter((char) => char !== '!').join('') + '!'
-console.log(remove('!!!Hi!'))
-console.log(remove('Hi'))
-console.log(remove('!Hi! Hi!!'))
-
-const bump = (x) => x.split('').reduce((acc, char) => char === 'n' ? acc + 1 : acc, 0) <= 15 ? 'Wohoo!' : 'Car Dead'
-
-console.log(bump("__nn_nnnn__n_n___n____nn__nnn"))
-console.log(bump("__nn_nnnn__n_n___n____nn__nnnn"))
-console.log(bump("__nn_nnnn__n_n___n____nn__nnnnn"))
-// :) :) :)
+//SET INTERVAL
+setInterval(() => {
+  const now = new Date();
+  console.log(now);
+}, 1000);
+*/
